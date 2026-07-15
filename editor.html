@@ -4,18 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Editor – NK Ivana</title>
-<link rel="stylesheet" href="styles.css?v=1784148846">
+<link rel="stylesheet" href="styles.css?v=1784153114">
 </head>
 <body>
 <div class="ed-bar">
   <span class="ttl">✏️ Editor · NK Ivana</span>
   <button class="btn ghost" id="previewBtn">👁 Náhled</button>
-  <button class="btn" id="downloadBtn">💾 Stáhnout content.js</button>
-  <button class="btn ghost" id="copyBtn">📋 Kopírovat JSON</button>
+  <button class="btn" id="downloadBtn">🚀 Publikovat živě</button>
   <button class="btn ghost" id="resetBtn">↺ Zahodit změny</button>
+  <button class="btn ghost" id="copyBtn">📋 Kopírovat JSON</button>
+  <button class="btn ghost" id="downloadJson">💾 Záloha (.js)</button>
 </div>
 <div class="wrap" style="padding-top:16px">
-  <p class="hint">Uprav obsah níže. Formátování: <b>**tučně**</b>, <i>*kurzíva*</i>, <code>- odrážka</code>, <code>1. číslo</code>, <code>&gt; rámeček</code>, <code>[text](odkaz)</code>. Změny se projeví, až <b>Stáhneš content.js</b> a nahraješ ho do GitHubu (nebo pošleš Vojtovi). Přes „Náhled" si je můžeš prohlédnout hned.</p>
+  <p class="hint">Uprav texty níže. Formátování: <b>**tučně**</b>, <i>*kurzíva*</i>, <code>- odrážka</code>, <code>1. číslo</code>, <code>&gt; rámeček</code>, <code>[text](odkaz)</code>. Přes <b>👁 Náhled</b> zkontroluješ, jak to vypadá, a <b>🚀 Publikovat živě</b> = změny se <b>hned projeví na webu</b> (i u Ivany). Žádné stahování ani GitHub.</p>
   <div id="editor"></div>
   <div class="foot">Editor NK · jen pro Vojtu 💛</div>
 </div>
@@ -23,8 +24,9 @@
   <div class="ed-bar"><span class="ttl">Náhled</span><button class="btn ghost" id="prevClose">Zavřít</button></div>
   <div id="prevBody" style="max-height:78vh;overflow:auto;padding:16px 4px"></div>
 </dialog>
-<script src="content.js?v=1784148846"></script>
-<script src="render.js?v=1784148846"></script>
-<script src="editor.js?v=1784148846"></script>
+<script src="content.js?v=1784153114"></script>
+<script src="nk-supabase.js?v=1784153114"></script>
+<script src="render.js?v=1784153114"></script>
+<script src="editor.js?v=1784153114"></script>
 </body>
 </html>

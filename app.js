@@ -1,6 +1,7 @@
 
 (function(){
-  var C=window.NK_CONTENT; NK.buildMaps(C);
+  function boot(C){
+  NK.buildMaps(C);
   document.getElementById('p-prehled').innerHTML=NK.renderPrehled(C);
   document.getElementById('p-harmonogram').innerHTML=NK.renderHarmonogram(C);
   document.getElementById('p-playbooky').innerHTML=NK.renderPlaybooky(C);
@@ -21,11 +22,16 @@
     var open=h.getAttribute('aria-expanded')==='true';h.setAttribute('aria-expanded',!open);
     h.parentElement.querySelector('.week-body').hidden=open;});});
   var fields=[].slice.call(document.querySelectorAll('[data-k]'));
+  var timers={};
+  function pushState(el){var k=el.dataset.k,val=el.type==='checkbox'?(el.checked?'1':'0'):el.value;
+    try{localStorage.setItem('nk-'+k,val);}catch(e){}
+    if(window.NKDB){if(el.type==='checkbox'){NKDB.setState(k,val);}
+      else{clearTimeout(timers[k]);timers[k]=setTimeout(function(){NKDB.setState(k,val);},700);}}}
   fields.forEach(function(el){var key='nk-'+el.dataset.k;
     try{var v=localStorage.getItem(key);if(v!==null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;}}catch(e){}
     el.addEventListener(el.type==='checkbox'?'change':'input',function(){
-      try{localStorage.setItem(key,el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
-      if(el.classList.contains('done-cb'))el.closest('.day').classList.toggle('done',el.checked);update();});
+      if(el.classList.contains('done-cb'))el.closest('.day').classList.toggle('done',el.checked);
+      pushState(el);update();});
     if(el.classList.contains('done-cb'))el.closest('.day').classList.toggle('done',el.checked);});
   var doneCbs=[].slice.call(document.querySelectorAll('.done-cb'));
   function update(){var done=doneCbs.filter(function(c){return c.checked;}).length,tot=doneCbs.length;
@@ -41,12 +47,11 @@
     var pct=tot?Math.round(done/tot*100):0;var f=document.getElementById('ovfill');if(f)f.style.width=pct+'%';
     var pp=document.getElementById('ovpct');if(pp)pp.textContent=pct;var dd=document.getElementById('ovdays');if(dd)dd.textContent=done;
     var wd=NK.weeksDone(C);[].forEach.call(document.querySelectorAll('.mile'),function(m){m.classList.toggle('done',!!wd[+m.dataset.week]);});}
-  update();
   function routeHash(){var h=location.hash;
     if(/^#pb-/.test(h)){show('playbooky');var el=document.getElementById(h.slice(1));
       if(el)setTimeout(function(){el.scrollIntoView({block:'start'});},90);}
     else if(h==='#harmonogram')show('harmonogram');else if(h==='#playbooky')show('playbooky');}
-  window.addEventListener('hashchange',routeHash);routeHash();
+  window.addEventListener('hashchange',routeHash);
   function buildOutput(){var lines=['VÝSTUPY – NK Ivana ('+new Date().toLocaleDateString('cs-CZ')+')',''];
     [].forEach.call(document.querySelectorAll('.day'),function(d){var out=(d.querySelector('textarea')||{}).value||'';
       var done=(d.querySelector('.done-cb')||{}).checked;
@@ -60,4 +65,15 @@
     a.href=URL.createObjectURL(b);a.download='vystupy-ivana.txt';a.click();});
   var tEl;function toast(){var e=document.createElement('div');e.className='toast show';e.textContent='Zkopírováno ✓';
     document.body.appendChild(e);clearTimeout(tEl);tEl=setTimeout(function(){e.remove();},1800);}
+  update();routeHash();
+  if(window.NKDB){NKDB.loadState().then(function(rows){if(!rows||!rows.length)return;
+    rows.forEach(function(row){var el=document.querySelector('[data-k="'+row.k+'"]');if(!el)return;
+      if(el.type==='checkbox'){el.checked=row.v==='1';if(el.classList.contains('done-cb'))el.closest('.day').classList.toggle('done',el.checked);}
+      else el.value=row.v;
+      try{localStorage.setItem('nk-'+row.k,row.v);}catch(e){}});
+    update();});}
+  }
+  var def=window.NK_CONTENT;
+  if(window.NKDB&&NKDB.loadContent){NKDB.loadContent().then(function(d){boot(d||def);}).catch(function(){boot(def);});}
+  else boot(def);
 })();
