@@ -17,8 +17,13 @@ NK.md=function(md){
     if(/^:::\s*.+/.test(ln)){var tt=ln.replace(/^:::\s*/,'');i++;var bd=[];
       while(i<lines.length&&!/^:::\s*$/.test(lines[i])){bd.push(lines[i]);i++;}i++;
       out.push('<details class="acc"><summary>'+NK.inline(tt)+'</summary><div class="acc-body">'+NK.md(bd.join('\n'))+'</div></details>');continue;}
-    if(/^!btn /.test(ln)){var m=ln.slice(5).match(/\[([^\]]+)\]\(([^)]+)\)/);
+    if(/^!btn /.test(ln)){var rest=ln.slice(5),m=rest.match(/\[([^\]]+)\]\(([^)]+)\)/);
+      if(!m){var lm=rest.match(/\[([^\]]+)\]\s*$/);
+        if(lm){var nl=(lines[i+1]||'').trim().replace(/^\(|\)$/g,'');
+          if(/^https?:\/\//.test(nl)){out.push('<a class="btn" href="'+nl+'" target="_blank" rel="noopener">'+NK.esc(lm[1])+'</a>');i+=2;continue;}}}
       if(m)out.push('<a class="btn" href="'+m[2]+'" target="_blank" rel="noopener">'+NK.esc(m[1])+'</a>');i++;continue;}
+    var _u=ln.trim().replace(/^\(|\)$/g,'');
+    if(/^https?:\/\/\S+$/.test(_u)){out.push('<p><a href="'+_u+'" target="_blank" rel="noopener">'+_u+'</a></p>');i++;continue;}
     if(/^####\s+/.test(ln)){out.push('<h4>'+NK.inline(ln.replace(/^####\s+/,''))+'</h4>');i++;continue;}
     if(/^###\s+/.test(ln)){out.push('<p class="qh"><b>'+NK.inline(ln.replace(/^###\s+/,''))+'</b></p>');i++;continue;}
     if(/^>\s?/.test(ln)){var b=[];while(i<lines.length&&/^>\s?/.test(lines[i])){b.push(NK.inline(lines[i].replace(/^>\s?/,'')));i++;}
