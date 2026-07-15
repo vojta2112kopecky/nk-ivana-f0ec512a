@@ -32,7 +32,15 @@
     var pf=document.getElementById('pfill');if(pf)pf.style.width=(tot?Math.round(done/tot*100):0)+'%';
     var pn=document.getElementById('pnum');if(pn)pn.textContent=done;
     [].forEach.call(document.querySelectorAll('.week'),function(w){var cbs=[].slice.call(w.querySelectorAll('.done-cb'));
-      var d=cbs.filter(function(c){return c.checked;}).length;var c=w.querySelector('.wk-count');if(c)c.textContent=d+'/'+c.dataset.total;});}
+      var d=cbs.filter(function(c){return c.checked;}).length;var c=w.querySelector('.wk-count');if(c)c.textContent=d+'/'+c.dataset.total;});
+    refreshLocks();refreshMilestones();}
+  function refreshLocks(){if(!window.NK)return;C.playbooks.forEach(function(p){var lk=NK.pbLocked(C,p.unlock||0);
+    var s=document.getElementById('pb-'+p.id);if(s)s.classList.toggle('locked',lk);
+    var a=document.querySelector('.pbnav a[href="#pb-'+p.id+'"]');if(a)a.classList.toggle('locked',lk);});}
+  function refreshMilestones(){if(!window.NK)return;var done=doneCbs.filter(function(c){return c.checked;}).length,tot=doneCbs.length;
+    var pct=tot?Math.round(done/tot*100):0;var f=document.getElementById('ovfill');if(f)f.style.width=pct+'%';
+    var pp=document.getElementById('ovpct');if(pp)pp.textContent=pct;var dd=document.getElementById('ovdays');if(dd)dd.textContent=done;
+    var wd=NK.weeksDone(C);[].forEach.call(document.querySelectorAll('.mile'),function(m){m.classList.toggle('done',!!wd[+m.dataset.week]);});}
   update();
   function routeHash(){var h=location.hash;
     if(/^#pb-/.test(h)){show('playbooky');var el=document.getElementById(h.slice(1));

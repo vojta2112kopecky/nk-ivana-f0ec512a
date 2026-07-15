@@ -26,11 +26,24 @@ NK.md=function(md){
   }
   return out.join('');
 };
+NK.weeksDone=function(C){return C.weeks.map(function(w){return w.days.length>0&&w.days.every(function(d){try{return localStorage.getItem('nk-'+d.id+'-done')==='1';}catch(e){return false;}});});};
+NK.pbLocked=function(C,u){if(!u)return false;var wd=NK.weeksDone(C);for(var i=0;i<u;i++){if(!wd[i])return true;}return false;};
+NK.renderMilestones=function(C){
+  var wd=NK.weeksDone(C),days=0,done=0;
+  C.weeks.forEach(function(w){w.days.forEach(function(d){days++;try{if(localStorage.getItem('nk-'+d.id+'-done')==='1')done++;}catch(e){}});});
+  var pct=days?Math.round(done/days*100):0;
+  var labels=['Zákaznický výzkum','Funnel (konverzka + e-maily)','Reklamy spuštěné','První prodej','Vyhodnocení'];
+  var miles=labels.map(function(l,i){return '<div class="mile'+(wd[i]?' done':'')+'" data-week="'+i+'"><span class="dot"></span><span class="ml">'+l+'</span></div>';}).join('');
+  return '<div class="ovprog"><div class="ovhead"><span class="eyebrow">Tvůj postup</span>'
+   +'<span class="ovpct"><b id="ovpct">'+pct+'</b>% · <span id="ovdays">'+done+'</span>/'+days+' dní</span></div>'
+   +'<div class="ovbar"><i id="ovfill" style="width:'+pct+'%"></i></div><div class="miles">'+miles+'</div></div>';
+};
 NK.renderPrehled=function(C){var p=C.prehled;
   return '<img class="hero-logo" src="'+window.NK_LOGO+'" alt="NK">'
    +'<p class="eyebrow">Akční plán · service delivery</p>'
    +'<h1>Ivano, tady je celá tvoje cesta.</h1>'
    +'<p class="lead">'+NK.inline(p.lead)+'</p>'
+   +NK.renderMilestones(C)
    +'<div class="callout">'+NK.md(p.highlight).replace(/^<p>|<\/p>$/g,'').replace(/<\/p><p>/g,'<br>')+'</div>'
    +'<h2>🔥 Nejdůležitější teď (do čtvrtka 23. 7.)</h2><div class="card">'+NK.md(p.deadline)+'</div>'
    +'<h2>🗺️ Kde co najdeš</h2><div class="tiles">'
@@ -70,10 +83,14 @@ NK.renderHarmonogram=function(C){
   return h;
 };
 NK.renderPlaybooky=function(C){
-  var nav=C.playbooks.map(function(p){return '<a href="#pb-'+p.id+'" data-pb="'+p.id+'">'+NK.esc(p.title.replace(/^[^ ]+ /,''))+'</a>';}).join('');
-  var secs=C.playbooks.map(function(p){return '<section class="pb" id="pb-'+p.id+'"><h3 class="pb-h">'+NK.esc(p.title)+'</h3>'+NK.md(p.md)+'</section>';}).join('');
+  var nav=C.playbooks.map(function(p){var lk=NK.pbLocked(C,p.unlock||0);
+    return '<a href="#pb-'+p.id+'" data-pb="'+p.id+'" class="'+(lk?'locked':'')+'">'+NK.esc(p.title.replace(/^[^ ]+ /,''))+'</a>';}).join('');
+  var secs=C.playbooks.map(function(p){var u=p.unlock||0,lk=NK.pbLocked(C,u);
+    return '<section class="pb'+(lk?' locked':'')+'" id="pb-'+p.id+'" data-unlock="'+u+'"><h3 class="pb-h">'+NK.esc(p.title)+'</h3>'
+     +'<div class="lockmsg">🔒 Odemkne se, až Ivana dokončí všechny úkoly Týdne '+u+'.</div>'
+     +'<div class="pb-content">'+NK.md(p.md)+'</div></section>';}).join('');
   return '<p class="eyebrow">Jak na to + šablony</p><h1>Playbooky</h1>'
-   +'<p class="lead">Ke každé fázi trychtýře: účel, přesný postup a šablony. Klikni na téma nebo skroluj.</p>'
+   +'<p class="lead">Odemykají se postupně 🔓 – nový balík vždy po dokončení všech úkolů předchozího týdne.</p>'
    +'<div class="pbnav">'+nav+'</div>'+secs;
 };
 NK.buildMaps=function(C){C.pbmap={};C.playbooks.forEach(function(p){C.pbmap[p.id]=p.title.replace(/^[^ ]+ /,'');});C.sheet="https://docs.google.com/spreadsheets/d/1ofap4TRpJXR7ZSdBqVdz7DmuTm1pM5_VWWlu263_2bA/edit";};
