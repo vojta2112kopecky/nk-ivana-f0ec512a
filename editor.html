@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Editor – NK Ivana</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="ed-bar">
+  <span class="ttl">✏️ Editor · NK Ivana</span>
+  <button class="btn ghost" id="previewBtn">👁 Náhled</button>
+  <button class="btn" id="downloadBtn">💾 Stáhnout content.js</button>
+  <button class="btn ghost" id="copyBtn">📋 Kopírovat JSON</button>
+  <button class="btn ghost" id="resetBtn">↺ Zahodit změny</button>
+</div>
+<div class="wrap" style="padding-top:16px">
+  <p class="hint">Uprav obsah níže. Formátování: <b>**tučně**</b>, <i>*kurzíva*</i>, <code>- odrážka</code>, <code>1. číslo</code>, <code>&gt; rámeček</code>, <code>[text](odkaz)</code>. Změny se projeví, až <b>Stáhneš content.js</b> a nahraješ ho do GitHubu (nebo pošleš Vojtovi). Přes „Náhled" si je můžeš prohlédnout hned.</p>
+  <div id="editor"></div>
+  <div class="foot">Editor NK · jen pro Vojtu 💛</div>
+</div>
+<dialog id="prev">
+  <div class="ed-bar"><span class="ttl">Náhled</span><button class="btn ghost" id="prevClose">Zavřít</button></div>
+  <div id="prevBody" style="max-height:78vh;overflow:auto;padding:16px 4px"></div>
+</dialog>
+<script src="content.js"></script>
+<script src="render.js"></script>
+<script src="editor.js"></script>
+</body>
+</html>
