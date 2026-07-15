@@ -72,6 +72,30 @@
       else el.value=row.v;
       try{localStorage.setItem('nk-'+row.k,row.v);}catch(e){}});
     update();});}
+  // ---- INLINE EDITOR (aktivní jen s ?edit v URL) ----
+  function applyEdit(path,val){var s=path.split('.');
+    if(s[0]==='prehled')C.prehled[s[1]]=val;
+    else if(s[0]==='pb'){if(s[2]==='md')C.playbooks[+s[1]].md=val;else C.playbooks[+s[1]][s[2]]=val;}
+    else if(s[0]==='day'){var d=C.weeks[+s[1]].days[+s[2]];if(s[3]==='step')d.steps[+s[4]]=val;else d[s[3]]=val;}}
+  function enableEdit(){document.body.classList.add('nk-edit');
+    [].forEach.call(document.querySelectorAll('[data-edit]'),function(el){el.setAttribute('contenteditable','true');
+      el.addEventListener('mousedown',function(e){e.stopPropagation();});
+      el.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();});
+      el.addEventListener('input',function(){applyEdit(el.getAttribute('data-edit'),el.innerText.trim());});});
+    [].forEach.call(document.querySelectorAll('[data-edit-md]'),function(el){var path=el.getAttribute('data-edit-md');
+      var s=path.split('.');var md=(s[0]==='pb')?(C.playbooks[+s[1]].md||''):'';
+      var ta=document.createElement('textarea');ta.className='nk-mdedit';ta.value=md;
+      ta.addEventListener('input',function(){applyEdit(path,ta.value);ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';});
+      ta.addEventListener('mousedown',function(e){e.stopPropagation();});
+      el.innerHTML='';el.appendChild(ta);ta.style.height=ta.scrollHeight+'px';});
+    var bar=document.createElement('div');bar.id='nk-editbar';
+    bar.innerHTML='<span>✏️ Režim úprav – klikni do textu a přepiš ho</span><button id="nk-pub">🚀 Publikovat</button>';
+    document.body.appendChild(bar);
+    document.getElementById('nk-pub').addEventListener('click',function(){var b=this;b.disabled=true;b.textContent='Publikuji…';
+      NKDB.saveContent(C).then(function(ok){b.disabled=false;b.textContent='🚀 Publikovat';
+        var t=document.createElement('div');t.className='toast show';t.textContent=ok?'✅ Publikováno! Web je aktualizovaný.':'❌ Chyba při publikaci';
+        document.body.appendChild(t);setTimeout(function(){t.remove();},2600);});});}
+  if(/[?&]edit/.test(location.search)&&window.NKDB)enableEdit();
   }
   var def=window.NK_CONTENT;
   if(window.NKDB&&NKDB.loadContent){NKDB.loadContent().then(function(d){boot(d||def);}).catch(function(){boot(def);});}

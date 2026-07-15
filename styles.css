@@ -115,6 +115,19 @@ details.acc[open]>summary::after{transform:rotate(180deg)}
 .acc-body>*:first-child{margin-top:0}.acc-body>*:last-child{margin-bottom:0}
 .acc-body p{margin:5px 0}
 .ph{background:var(--card);border:1px dashed var(--rose);color:var(--rose-dk);border-radius:5px;padding:0 5px;font-weight:600;font-size:.9em}
+/* inline editační režim (?edit) */
+body.nk-edit{padding-bottom:66px}
+body.nk-edit [data-edit]{outline:1px dashed transparent;border-radius:5px;cursor:text;transition:outline .12s,background .12s}
+body.nk-edit [data-edit]:hover{outline-color:var(--rose);background:rgba(180,125,104,.07)}
+body.nk-edit [data-edit]:focus{outline:2px solid var(--rose);outline-offset:2px;background:var(--rose-tint)}
+body.nk-edit .pb.locked{opacity:1}
+body.nk-edit .pb.locked .pb-content{display:block}
+body.nk-edit .pb.locked .lockmsg{display:none}
+textarea.nk-mdedit{width:100%;min-height:120px;border:1px solid var(--rose);border-radius:8px;padding:10px;font-family:'Mont',monospace;font-size:13px;line-height:1.5;color:var(--ink);background:#fff;resize:vertical}
+#nk-editbar{position:fixed;left:0;right:0;bottom:0;z-index:9999;background:var(--ink);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 18px;font-size:13.5px;box-shadow:0 -4px 20px rgba(0,0,0,.25)}
+#nk-editbar button{background:var(--rose);color:#fff;border:none;border-radius:9px;padding:10px 18px;font-weight:700;font-family:inherit;cursor:pointer;font-size:14px;flex:0 0 auto}
+#nk-editbar button:hover{background:var(--rose-dk)}
+#nk-editbar button:disabled{opacity:.6}
 /* editor */
 .ed-bar{position:sticky;top:0;z-index:30;background:var(--card);border-bottom:1px solid var(--line);padding:12px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .ed-bar .ttl{font-weight:700;margin-right:auto}

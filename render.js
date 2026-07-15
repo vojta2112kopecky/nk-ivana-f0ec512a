@@ -46,7 +46,7 @@ NK.renderPrehled=function(C){var p=C.prehled;
   return '<img class="hero-logo" src="'+window.NK_LOGO+'" alt="NK">'
    +'<p class="eyebrow">Akční plán · service delivery</p>'
    +'<h1>Ivano, tady je celá tvoje cesta.</h1>'
-   +'<p class="lead">'+NK.inline(p.lead)+'</p>'
+   +'<p class="lead" data-edit="prehled.lead">'+NK.inline(p.lead)+'</p>'
    +NK.renderMilestones(C)
    +'<div class="callout">'+NK.md(p.highlight).replace(/^<p>|<\/p>$/g,'').replace(/<\/p><p>/g,'<br>')+'</div>'
    +'<h2>🔥 Nejdůležitější teď (do čtvrtka 23. 7.)</h2><div class="card">'+NK.md(p.deadline)+'</div>'
@@ -57,8 +57,8 @@ NK.renderPrehled=function(C){var p=C.prehled;
    +'<p class="muted" style="font-size:12.5px;margin-top:6px">Tvoje odškrtání a výstupy se ukládají samy do tvého prohlížeče.</p>'
    +'<h2>🎯 Strategie a nabídka</h2><div class="card">'+NK.md(p.strategie)+'</div>'
    +'<div class="callout">'+NK.md(p.nabidka).replace(/^<p>|<\/p>$/g,'')+'</div>'
-   +'<div class="grid2"><div class="card"><b>✅ Komu ANO</b><br>'+NK.inline(p.ano)+'</div>'
-   +'<div class="card"><b>⛔ Komu NE</b><br>'+NK.inline(p.ne)+'</div></div>'
+   +'<div class="grid2"><div class="card"><b>✅ Komu ANO</b><br><span data-edit="prehled.ano">'+NK.inline(p.ano)+'</span></div>'
+   +'<div class="card"><b>⛔ Komu NE</b><br><span data-edit="prehled.ne">'+NK.inline(p.ne)+'</span></div></div>'
    +'<h2>🤝 Pravidla</h2><div class="card">'+NK.md(p.pravidla)+'</div>';
 };
 NK.renderHarmonogram=function(C){
@@ -71,16 +71,16 @@ NK.renderHarmonogram=function(C){
      +'<span><span class="week-name">'+NK.esc(w.name)+'</span><span class="week-sub">'+NK.esc(w.sub)+'</span></span>'
      +'<span class="week-meta"><span class="wk-count" data-total="'+w.days.length+'">0/'+w.days.length+'</span><span class="chev">▾</span></span></button>'
      +'<div class="week-body"'+(wi===0?'':' hidden')+'>';
-    w.days.forEach(function(d){
+    w.days.forEach(function(d,di){
       var pb=d.pb?(' <a class="pblink" href="#pb-'+d.pb+'" target="_blank" rel="noopener">📚 '+NK.esc((C.pbmap||{})[d.pb]||'Playbook')+'</a>'):'';
-      var steps=d.steps.map(function(s,i){return '<li><label class="chk"><input type="checkbox" data-k="'+d.id+'-s'+i+'"><span>'+NK.esc(s)+'</span></label></li>';}).join('');
+      var steps=d.steps.map(function(s,i){return '<li><label class="chk"><input type="checkbox" data-k="'+d.id+'-s'+i+'"><span data-edit="day.'+wi+'.'+di+'.step.'+i+'">'+NK.esc(s)+'</span></label></li>';}).join('');
       h+='<article class="day" data-label="'+NK.esc(d.dow+' – '+d.title)+'"><div class="day-top">'
-       +'<span class="dow">'+NK.esc(d.dow)+'</span><h3 class="day-title">'+NK.esc(d.title)+'</h3>'
+       +'<span class="dow">'+NK.esc(d.dow)+'</span><h3 class="day-title" data-edit="day.'+wi+'.'+di+'.title">'+NK.esc(d.title)+'</h3>'
        +'<label class="donepill"><input type="checkbox" class="done-cb" data-k="'+d.id+'-done"><span>Hotovo</span></label></div>'
-       +'<p class="goal"><span class="k">Cíl</span> '+NK.esc(d.goal)+pb+'</p><ul class="steps">'+steps+'</ul>'
+       +'<p class="goal"><span class="k">Cíl</span> <span data-edit="day.'+wi+'.'+di+'.goal">'+NK.esc(d.goal)+'</span>'+pb+'</p><ul class="steps">'+steps+'</ul>'
        +'<div class="outwrap"><label class="lbl">Můj výstup / odkazy</label>'
        +'<textarea class="out" data-k="'+d.id+'-out" rows="2" placeholder="Sem napiš, cos udělala, a vlož odkazy…"></textarea>'
-       +'<p class="deliver">📤 Večer pošli: '+NK.esc(d.deliver)+'</p></div></article>';
+       +'<p class="deliver">📤 Večer pošli: <span data-edit="day.'+wi+'.'+di+'.deliver">'+NK.esc(d.deliver)+'</span></p></div></article>';
     });
     h+='</div></section>';
   });
@@ -89,10 +89,10 @@ NK.renderHarmonogram=function(C){
 NK.renderPlaybooky=function(C){
   var nav=C.playbooks.map(function(p){var lk=NK.pbLocked(C,p.unlock||0);
     return '<a href="#pb-'+p.id+'" data-pb="'+p.id+'" class="'+(lk?'locked':'')+'">'+NK.esc(p.title.replace(/^[^ ]+ /,''))+'</a>';}).join('');
-  var secs=C.playbooks.map(function(p){var u=p.unlock||0,lk=NK.pbLocked(C,u);
-    return '<section class="pb'+(lk?' locked':'')+'" id="pb-'+p.id+'" data-unlock="'+u+'"><h3 class="pb-h">'+NK.esc(p.title)+'</h3>'
+  var secs=C.playbooks.map(function(p,pi){var u=p.unlock||0,lk=NK.pbLocked(C,u);
+    return '<section class="pb'+(lk?' locked':'')+'" id="pb-'+p.id+'" data-unlock="'+u+'"><h3 class="pb-h" data-edit="pb.'+pi+'.title">'+NK.esc(p.title)+'</h3>'
      +'<div class="lockmsg">🔒 Odemkne se, až Ivana dokončí všechny úkoly Týdne '+u+'.</div>'
-     +'<div class="pb-content">'+NK.md(p.md)+'</div></section>';}).join('');
+     +'<div class="pb-content" data-edit-md="pb.'+pi+'.md">'+NK.md(p.md)+'</div></section>';}).join('');
   return '<p class="eyebrow">Jak na to + šablony</p><h1>Playbooky</h1>'
    +'<p class="lead">Odemykají se postupně 🔓 – nový balík vždy po dokončení všech úkolů předchozího týdne.</p>'
    +'<div class="pbnav">'+nav+'</div>'+secs;
