@@ -55,7 +55,7 @@ NK.renderHarmonogram=function(C){
      +'<span class="week-meta"><span class="wk-count" data-total="'+w.days.length+'">0/'+w.days.length+'</span><span class="chev">▾</span></span></button>'
      +'<div class="week-body"'+(wi===0?'':' hidden')+'>';
     w.days.forEach(function(d){
-      var pb=d.pb?(' <a class="pblink" href="#pb-'+d.pb+'" data-pb="'+d.pb+'">📚 '+NK.esc((C.pbmap||{})[d.pb]||'Playbook')+'</a>'):'';
+      var pb=d.pb?(' <a class="pblink" href="#pb-'+d.pb+'" target="_blank" rel="noopener">📚 '+NK.esc((C.pbmap||{})[d.pb]||'Playbook')+'</a>'):'';
       var steps=d.steps.map(function(s,i){return '<li><label class="chk"><input type="checkbox" data-k="'+d.id+'-s'+i+'"><span>'+NK.esc(s)+'</span></label></li>';}).join('');
       h+='<article class="day" data-label="'+NK.esc(d.dow+' – '+d.title)+'"><div class="day-top">'
        +'<span class="dow">'+NK.esc(d.dow)+'</span><h3 class="day-title">'+NK.esc(d.title)+'</h3>'

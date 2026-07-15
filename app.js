@@ -11,6 +11,7 @@
     if(name==='vystupy')buildOutput();window.scrollTo(0,0);}
   tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.tab);});});
   document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#"]');if(!a)return;
+    if(a.target==='_blank')return;
     var href=a.getAttribute('href');e.preventDefault();
     if(href==='#harmonogram'){show('harmonogram');return;}
     if(href==='#playbooky'){show('playbooky');return;}
@@ -33,6 +34,11 @@
     [].forEach.call(document.querySelectorAll('.week'),function(w){var cbs=[].slice.call(w.querySelectorAll('.done-cb'));
       var d=cbs.filter(function(c){return c.checked;}).length;var c=w.querySelector('.wk-count');if(c)c.textContent=d+'/'+c.dataset.total;});}
   update();
+  function routeHash(){var h=location.hash;
+    if(/^#pb-/.test(h)){show('playbooky');var el=document.getElementById(h.slice(1));
+      if(el)setTimeout(function(){el.scrollIntoView({block:'start'});},90);}
+    else if(h==='#harmonogram')show('harmonogram');else if(h==='#playbooky')show('playbooky');}
+  window.addEventListener('hashchange',routeHash);routeHash();
   function buildOutput(){var lines=['VÝSTUPY – NK Ivana ('+new Date().toLocaleDateString('cs-CZ')+')',''];
     [].forEach.call(document.querySelectorAll('.day'),function(d){var out=(d.querySelector('textarea')||{}).value||'';
       var done=(d.querySelector('.done-cb')||{}).checked;
