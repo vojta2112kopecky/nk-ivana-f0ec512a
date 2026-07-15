@@ -9,7 +9,7 @@
   var tabs=[].slice.call(document.querySelectorAll('.tab'));
   function show(name){tabs.forEach(function(t){t.setAttribute('aria-selected',t.dataset.tab===name?'true':'false');});
     for(var k in panels)document.getElementById(panels[k]).classList.toggle('on',k===name);
-    if(name==='vystupy')buildOutput();window.scrollTo(0,0);}
+    if(name==='vystupy')pullState(buildOutput);window.scrollTo(0,0);}
   tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.tab);});});
   document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#"]');if(!a)return;
     if(a.target==='_blank')return;
@@ -65,13 +65,13 @@
     a.href=URL.createObjectURL(b);a.download='vystupy-ivana.txt';a.click();});
   var tEl;function toast(){var e=document.createElement('div');e.className='toast show';e.textContent='Zkopírováno ✓';
     document.body.appendChild(e);clearTimeout(tEl);tEl=setTimeout(function(){e.remove();},1800);}
-  update();routeHash();
-  if(window.NKDB){NKDB.loadState().then(function(rows){if(!rows||!rows.length)return;
-    rows.forEach(function(row){var el=document.querySelector('[data-k="'+row.k+'"]');if(!el)return;
+  function pullState(cb){if(!window.NKDB){if(cb)cb();return;}
+    NKDB.loadState().then(function(rows){(rows||[]).forEach(function(row){var el=document.querySelector('[data-k="'+row.k+'"]');if(!el)return;
       if(el.type==='checkbox'){el.checked=row.v==='1';if(el.classList.contains('done-cb'))el.closest('.day').classList.toggle('done',el.checked);}
-      else el.value=row.v;
-      try{localStorage.setItem('nk-'+row.k,row.v);}catch(e){}});
-    update();});}
+      else el.value=row.v;try{localStorage.setItem('nk-'+row.k,row.v);}catch(e){}});
+      update();if(cb)cb();}).catch(function(){if(cb)cb();});}
+  update();routeHash();
+  pullState();
   // ---- INLINE EDITOR (aktivní jen s ?edit v URL) ----
   function applyEdit(path,val){var s=path.split('.');
     if(s[0]==='prehled')C.prehled[s[1]]=val;
