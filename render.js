@@ -6,6 +6,7 @@ NK.inline=function(t){
   t=t.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
   t=t.replace(/(^|[^\*])\*([^\*]+?)\*/g,'$1<i>$2</i>');
   t=t.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  t=t.replace(/\[([^\]]+)\]/g,'<span class="ph">[$1]</span>');
   return t;
 };
 NK.md=function(md){
@@ -13,6 +14,9 @@ NK.md=function(md){
   function flush(tag,buf){if(buf.length)out.push('<'+tag+'>'+buf.join('')+'</'+tag+'>');}
   while(i<lines.length){
     var ln=lines[i];
+    if(/^:::\s*.+/.test(ln)){var tt=ln.replace(/^:::\s*/,'');i++;var bd=[];
+      while(i<lines.length&&!/^:::\s*$/.test(lines[i])){bd.push(lines[i]);i++;}i++;
+      out.push('<details class="acc"><summary>'+NK.inline(tt)+'</summary><div class="acc-body">'+NK.md(bd.join('\n'))+'</div></details>');continue;}
     if(/^!btn /.test(ln)){var m=ln.slice(5).match(/\[([^\]]+)\]\(([^)]+)\)/);
       if(m)out.push('<a class="btn" href="'+m[2]+'" target="_blank" rel="noopener">'+NK.esc(m[1])+'</a>');i++;continue;}
     if(/^####\s+/.test(ln)){out.push('<h4>'+NK.inline(ln.replace(/^####\s+/,''))+'</h4>');i++;continue;}
