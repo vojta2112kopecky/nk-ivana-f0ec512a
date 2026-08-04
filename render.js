@@ -36,7 +36,7 @@ NK.md=function(md){
   return out.join('');
 };
 NK.weeksDone=function(C){return C.weeks.map(function(w){return w.days.length>0&&w.days.every(function(d){try{return localStorage.getItem('nk-'+d.id+'-done')==='1';}catch(e){return false;}});});};
-NK.pbLocked=function(C,u){if(!u)return false;var wd=NK.weeksDone(C);for(var i=0;i<u;i++){if(!wd[i])return true;}return false;};
+NK.pbLocked=function(){return false;};  /* vše odemčené – Ivana má přístup ke všem playbookům */
 NK.renderMilestones=function(C){
   var wd=NK.weeksDone(C),days=0,done=0;
   C.weeks.forEach(function(w){w.days.forEach(function(d){days++;try{if(localStorage.getItem('nk-'+d.id+'-done')==='1')done++;}catch(e){}});});
