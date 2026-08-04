@@ -96,10 +96,9 @@ NK.renderPlaybooky=function(C){
     return '<a href="#pb-'+p.id+'" data-pb="'+p.id+'" class="'+(lk?'locked':'')+'">'+NK.esc(p.title.replace(/^[^ ]+ /,''))+'</a>';}).join('');
   var secs=C.playbooks.map(function(p,pi){var u=p.unlock||0,lk=NK.pbLocked(C,u);
     return '<section class="pb'+(lk?' locked':'')+'" id="pb-'+p.id+'" data-unlock="'+u+'"><h3 class="pb-h" data-edit="pb.'+pi+'.title">'+NK.esc(p.title)+'</h3>'
-     +'<div class="lockmsg">🔒 Odemkne se, až Ivana dokončí všechny úkoly Týdne '+u+'.</div>'
      +'<div class="pb-content" data-edit-md="pb.'+pi+'.md">'+NK.md(p.md)+'</div></section>';}).join('');
   return '<p class="eyebrow">Jak na to + šablony</p><h1>Playbooky</h1>'
-   +'<p class="lead">Odemykají se postupně 🔓 – nový balík vždy po dokončení všech úkolů předchozího týdne.</p>'
+   +'<p class="lead">Všechno máš odemčené – jak na to, šablony a scénáře. Klikni na kartičku a skoč rovnou na to, co zrovna řešíš.</p>'
    +'<div class="pbnav">'+nav+'</div>'+secs;
 };
 NK.buildMaps=function(C){C.pbmap={};C.playbooks.forEach(function(p){C.pbmap[p.id]=p.title.replace(/^[^ ]+ /,'');});C.sheet="https://docs.google.com/spreadsheets/d/1ofap4TRpJXR7ZSdBqVdz7DmuTm1pM5_VWWlu263_2bA/edit";};
